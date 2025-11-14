@@ -62,19 +62,30 @@ bool is_prime(ll x) { if (x==1) return 0; for(int i = 2; i*i <= x; ++i) if (x%i=
 //----------------------------------------------------------------------------------------------------
 
 /*---------Given Data---------
-
+    1. array 'marbles' of size 'n' in non-decreasing order
+    2. Alice chooses a number 'a' and Bob chooses 'b'
+    3. Scoring:
+        a. Alice gets a point for each element that is closer to 'a' than 'b'
+        b. Bob gets a point for each element that is closer to 'b' than 'a'
+        c. In case of a tie, Alice gets the point
 */
 
 /*---------Objective---------
-
+    choose a 'b' such that the points for Bob are maximized
 */
 
 /*---------Constraints---------
-
+    1 <= n <= 3e5
+    1 <= a <= 1e9
+    1 <= marbles[i] <= 1e9
 */
 
 /*---------Observations---------
-
+    1. it is optimal to stay as close to 'a' as possible
+    2. it is never optimal to keep b = a because in that case Bob will get 0 points
+    3. so answer is either a + 1 or a - 1
+    4. a + 1 will give us the best score if the number of elements that are smaller than 'a' is lesser than the number of elements that are greater than 'a'
+    5. a - 1 will give us the best score if the number of elements that are smaller than 'a' is greater than the number of elements that are greater then 'a'
 */
 
 /*---------Intuition---------
@@ -97,6 +108,7 @@ ll solve() {
     int n = readi(), a = readi();
     vi marbles = readvi(n);
  
+    // find the number of elements that are greater and smaller than 'a'
     int lesser = 0, greater = 0;
     fe(m, marbles){
         lesser += (m < a);

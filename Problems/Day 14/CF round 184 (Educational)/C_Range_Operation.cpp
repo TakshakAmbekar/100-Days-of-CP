@@ -62,19 +62,38 @@ bool is_prime(ll x) { if (x==1) return 0; for(int i = 2; i*i <= x; ++i) if (x%i=
 //----------------------------------------------------------------------------------------------------
 
 /*---------Given Data---------
-
+    1. integer array 'a' for size 'n'
+    2. operation:
+        a. choose a range [l, r] such that 1 <= l <= r <= n
+        b. replace each element in that range with a[l] + a[r]
+    3. operation can only be performed once
 */
 
 /*---------Objective---------
-
+    maximize the total sum after the operation
 */
 
 /*---------Constraints---------
-
+    1 <= n <= 2e5
+    0 <= ai <= 2n
 */
 
 /*---------Observations---------
-
+    1.  when we choose a range, the sum changes by some amount
+    2.  the amount by which the sum changes can be found using prefix
+    3.  gain(l, r) = newSum - oldSum
+        where,  newSum = (r - l + 1) * (l + r) 
+                oldSum = pref[r] - pref[l - 1]
+    4.  we need to maximize this gain
+    5.  separate gain into two parts
+        gain    = (r - l + 1) * (l + r) - (pref[r] - pref[l - 1]) 
+                = (r + 1) * l + (r + 1) * r - l * l + 1 - pref[r] + pref[l - 1]
+                = (pref[l - 1] - l * l + 1) + (r * r + r - pref[r])
+        leftContribution(l) = pref[l - 1] - l * l + 1
+        rightContribution(r) = r * r + r - pref[r]
+        newTotal = total + leftContribution(l) + rightContribution(r)
+    6.  since left and right contributions are now independent, the problem reduces to finding the best 'r' > 'l' for each 'l'
+    7.  we need to preprocess the suffix maximum of rightContribution so that we can find the best 'r' in O(1) for each 'l'
 */
 
 /*---------Intuition---------
@@ -97,32 +116,35 @@ ll solve() {
     int n = readi();
     vl values = readvl(n);
 
+    // find the prefix
     vl pref(n + 1, 0);
     cf(i, 1, n)
         pref[i] = pref[i - 1] + values[i - 1];
     
-
+    // initial total sum
     ll total = pref[n];
+
+    // final sum after the operation
     ll best = total;      
 
+    // build the rightContribution array
     vl rightContribution(n + 1);
     cf(r, 1, n)
-        rightContribution[r] = 1LL * r * r + r - pref[r];
+        rightContribution[r] = r * r + r - pref[r];
     
-
-    vl suf(n + 2, LLONG_MIN);
+    // preprocess the suffix such that at each 'i' we have the maximum rightContribution that we can get
+    vl suf(n + 1, LLONG_MIN);
     suf[n] = rightContribution[n];
-
     rf(i, n, 1)
         suf[i] = max(suf[i + 1], rightContribution[i]);
 
+    // for each 'l' get the best possible sum and update the best if needed
     cf(l, 1, n){
-        ll leftContribution = pref[l - 1] - 1LL * l * l + l;                  
+        ll leftContribution = pref[l - 1] - l * l + l;                  
         ll bestRight = suf[l];
         ll newTotal = total + leftContribution + bestRight;
         best = max(best, newTotal);
     }
-
     return best;
 }
 

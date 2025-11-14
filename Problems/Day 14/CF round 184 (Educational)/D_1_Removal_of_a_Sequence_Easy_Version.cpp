@@ -62,19 +62,29 @@ bool is_prime(ll x) { if (x==1) return 0; for(int i = 2; i*i <= x; ++i) if (x%i=
 //----------------------------------------------------------------------------------------------------
 
 /*---------Given Data---------
-
+    1. a sequence of 1 to 1e12 
+    2. numbers x = number of operations, y = value, k = index
+    3. operation
+        remove all numbers at positions that are multiples of 'y'
+    4. the operation is performed 'x' times
 */
 
 /*---------Objective---------
-
+    find the number at 'k' index after all operations are performed
+    or return -1 if after all operations, remaining numbers are less than 'k'
 */
 
 /*---------Constraints---------
-
+    1 <= x <= 1e5
+    1 <= y
+    k <= 1e12
 */
 
 /*---------Observations---------
-
+    1.  the constraints are too high, so we cannot simulate the removals
+    2.  if y = 1, all numbers will be removed => return -1
+    3.  numbers from 1 to y - 1 are never removed
+    
 */
 
 /*---------Intuition---------
@@ -100,22 +110,23 @@ ll solve() {
 
     if (y == 1) return -1;
 
+    // currentPosition is the position of 'k' in the new array after removals
     ll currentPosition = k;
 
+    // make changes one operation at a time
     cf(i, 1, x){
+        // find the count of numbers that are removed till the currentPosition
         ll removedBefore = (currentPosition - 1) / (y - 1);
 
         if(removedBefore == 0) break;
 
-        if(currentPosition > LIMIT - removedBefore){
+        if(currentPosition + removedBefore > LIMIT){
             currentPosition = LIMIT + 1;
             break;
         }
 
+        // shift currenPosition to right by the count of removed numbers
         currentPosition += removedBefore;
-
-        if(currentPosition > LIMIT)
-            return -1;
     }
 
     if(currentPosition > LIMIT) return -1;

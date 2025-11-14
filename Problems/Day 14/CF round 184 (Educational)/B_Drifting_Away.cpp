@@ -62,11 +62,14 @@ bool is_prime(ll x) { if (x==1) return 0; for(int i = 2; i*i <= x; ++i) if (x%i=
 //----------------------------------------------------------------------------------------------------
 
 /*---------Given Data---------
-
+    1. a string of size 'n' made of '<', '>' and '*'
+    2. if the cell is '>' move to the right neighboring cell in 1 unit time
+    3. if the cell is '<' move to the left neighboring cell in 1 unit time
+    4. if the cell is '*' move to either of the neighboring cell in 1 unit time
 */
 
 /*---------Objective---------
-
+    maximize the time in the stream 
 */
 
 /*---------Constraints---------
@@ -74,7 +77,17 @@ bool is_prime(ll x) { if (x==1) return 0; for(int i = 2; i*i <= x; ++i) if (x%i=
 */
 
 /*---------Observations---------
-
+    1. the infinite case occurs in following conditions:
+        a. there is '><' in the string
+        b. there is '**' in the string
+        c. there is '*<' in the string
+        d. there is '>*' in the string
+    2. if none of these occur, we will always reach a shore
+    3. if none of the infinite conditions occur, then there must be a block of '<' followed by
+        i.  a block of '>'
+        ii. a '*' and then a block of '>' 
+        here we need to find the longest size of the blocks. 
+        if there is a '*' in between then we need to include it in our answer as well
 */
 
 /*---------Intuition---------
@@ -100,24 +113,28 @@ ll solve() {
     if(n == 1) return 1;
 
     f(i, 0, n - 1)
+        // this single condition takes care of all the four infinite cases
         if(s[i] != '<' && s[i + 1] != '>')
             return -1;
     
+    // count the '<' block size
     int left_count = 0;
     while(left_count < n && s[left_count] == '<')
         left_count++;
     
+    // count the '>' block size
     int right_count = 0;
     while(right_count < n && s[n - 1 - right_count] == '>')
         right_count++;
 
+    // account for '*' in the middle
     int star = 0;
-
     if(s[left_count] == '*')
         star = 1;
     
     return max(left_count + star, right_count + star);
 }
+
 int main() {
     Takshak
     ll t = readl();
