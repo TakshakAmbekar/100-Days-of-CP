@@ -119,6 +119,33 @@ ll solve() {
     else return a + 1;
 }
 
+// ll solve() {
+//     int n = readi(), a = readi();
+//     vi marbles = readvi(n);
+ 
+//     float middle;
+//     if(n % 2 == 1) middle = marbles[(n - 1) / 2];
+//     else middle = (marbles[(n - 1) / 2] + marbles[(n + 1) / 2]) / 2.0;
+    
+//     // if a < middle, choose a + 1
+//     if(a < middle) return a + 1;
+//     // else if a > middle, choose a - 1
+//     else if(a > middle) return a - 1;
+//     // if a = middle
+//     else{
+//         // we need to check whether we should prefer right side or left side
+//         // so we need the count of numbers lesser than a and greater than a
+//         int lesser = 0, greater = 0;
+//         fe(m, marbles){
+//             if(m < a) lesser++;
+//             else if(m > a) greater++;
+//         }
+
+//         if(lesser > greater) return a - 1;
+//         else return a + 1;
+//     }
+// }
+
 int main() {
     Takshak
     ll t = readl();
